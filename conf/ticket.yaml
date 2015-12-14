@@ -1,0 +1,34 @@
+#email
+#mail.smtp.host: "smtp.163.com"
+#mail.smtp.auth: "true"
+#mail.transport.protocol: "smtp"
+#mail.account:
+#  username: "zgjpkc@163.com"
+#  password: "zgjpkc01"
+#
+#mail.account:
+#  username: "fenlonxiong@gmail.com"
+#  password: "xflxflxfl"
+
+ticket.mail.provider:
+  smtp.host: "smtp.163.com"
+  smtp.auth: true
+  transport.protocol: "smtp"
+  account:
+    username: "zgjpkc@163.com"
+    password: "zgjpkc01"
+  account:
+      username: "zgjpkc@163.com"
+      password: "zgjpkc01"
+
+ticket.mail.provider:
+  smtp.host: "smtp.gmail.com"
+  smtp.auth: "true"
+  transport.protocol: "smtp"
+  account:
+    username: "gmail@163.com"
+    password: "gmail"
+  account:
+      username: "zgjpkc@163.com"
+      password: "zgjpkc01"
+
