@@ -5,5 +5,21 @@ package com.fenlonsky.ticket.model;
  */
 public class Email {
     private String content;
-    private String to;
+    private String[] tos;
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String[] getTos() {
+        return tos;
+    }
+
+    public void setTos(String[] tos) {
+        this.tos = tos;
+    }
 }

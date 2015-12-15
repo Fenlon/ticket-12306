@@ -1,6 +1,7 @@
 package com.fenlonsky.ticket.factory;
 
 import com.fenlonsky.ticket.model.Account;
+import com.fenlonsky.ticket.model.Email;
 import com.fenlonsky.ticket.model.EmailProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,58 +15,90 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by fenlon on 15-12-12.
  */
 public class MailSender implements Sender {
-
-    private String[] to = {"935057327@qq.com", "853555703@qq.com"};
-
     private static final Logger logger = LoggerFactory.getLogger(MailSender.class);
 
+    ExecutorService executorService = Executors.newSingleThreadExecutor();
     private EmailProvider provider;
 
-    private BlockingQueue emailQueue;
+    private BlockingQueue<Email> emailQueue;
 
-    public MailSender(EmailProvider provider) {
+    public MailSender(EmailProvider provider, BlockingQueue<Email> emailQueue) {
         this.provider = provider;
+        this.emailQueue = emailQueue;
     }
 
-    public void Send(String content) {
-        Email email = new Email(content);
-        new Thread(email).start();
+    public void start() {
+        EmailThread thread0 = new EmailThread();
+        EmailThread thread2 = new EmailThread();
+
+        //取出提交到池子中
+        while (true && !Thread.currentThread().isInterrupted()) {
+            try {
+                Email email = emailQueue.take();
+                if (email == null) {
+                    return;
+                }
+                if (thread0.getEmail() != null) {
+                    thread0.setEmail(email);
+                    new Thread(thread0).start();
+                }
+                if (thread2.getEmail() != null) {
+                    thread2.setEmail(email);
+                    new Thread(thread2).start();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public void send(Email email) {
-
+    public void Send(String content, String[] tos) {
+        Email mail = new Email();
+        mail.setContent(content);
+        mail.setTos(tos);
+        this.emailQueue.offer(mail);
     }
 
-    private class Email implements Runnable {
-        private String content;
+    private class EmailThread implements Runnable {
+        private Email email;
 
-        public Email(String content) {
-            this.content = content;
+        public EmailThread() {
+        }
+
+        public void setEmail(Email email) {
+            this.email = email;
+        }
+
+        public Email getEmail() {
+            return email;
         }
 
         public void run() {
-            send(content, provider.getAccounts());
+            send(email, provider.getAccounts());
+            this.email = null;
         }
     }
 
-    public void send(String content, List<Account> accounts) {
+    public void send(Email email, List<Account> accounts) {
         Properties props = new Properties();
         props.setProperty("mail.smtp.host", provider.getHost());
         props.setProperty("mail.smtp.auth", String.valueOf(provider.getAuth()));
         props.setProperty("mail.transport.protocol", "smtp");
         Session session = Session.getInstance(props);
         try {
-            MimeMultipart mm = buildTemplate(content);
+            MimeMultipart mm = buildTemplate(email.getContent());
             for (Account account : accounts) {
                 if (!account.getActive()) {
                     continue;
                 }
-                Message message = createMessage(session, account.getUsername(), to);
+                Message message = createMessage(session, account.getUsername(), email.getTos());
                 message.setContent(mm);
                 message.saveChanges();
                 try {
