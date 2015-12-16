@@ -33,7 +33,8 @@ public class TaskFactory {
     }
 
     public List<Task> getTasks() {
-        String json = FileIOUtil.readFile(config.getConfDirKey() + File.separator + "task.json");
+//        String json = FileIOUtil.readFile(config.getConfDirKey() + File.separator + "task.json");
+        String json = FileIOUtil.readFile("D:\\Java\\workspace\\ticket\\conf\\task.json");
         if (json.equals("")) {
             return null;
         }
@@ -51,7 +52,7 @@ public class TaskFactory {
 
     private Task mapper2Obj(JSONObject jsonTask) {
         Task task = new Task();
-        task.setName(jsonTask.getString("name"));
+        task.setName((String) jsonTask.get("name"));
         task.setStartDate(jsonTask.getString("startDate"));
         task.setEndDate(jsonTask.getString("endDate"));
         task.setUrlTemplate(jsonTask.getString("urlTemplate"));

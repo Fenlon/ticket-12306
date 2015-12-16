@@ -1,7 +1,20 @@
 {
   "tasks": [
     {
-      "name:": "上海到潢川",
+      "name": "上海到潢川",
+      "startDate": "2015-1-30",
+      "endDate": "2016-2-14",
+      "urlTemplate": "https://kyfw.12306.cn/otn/leftTicket/queryT?leftTicketDTO.train_date={date}&leftTicketDTO.from_station=SHH&leftTicketDTO.to_station={to}&purpose_codes=ADULT",
+      "tos": [
+        "935057327@qq.com",
+        "853555703@qq.com"
+      ],
+      "stations": [
+        "KCN"
+      ]
+    },
+    {
+      "name": "上海到潢川",
       "startDate": "2015-1-30",
       "endDate": "2016-2-14",
       "urlTemplate": "https://kyfw.12306.cn/otn/leftTicket/queryT?leftTicketDTO.train_date={date}&leftTicketDTO.from_station=SHH&leftTicketDTO.to_station={to}&purpose_codes=ADULT",
